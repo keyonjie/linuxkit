@@ -9,9 +9,9 @@ init:
 onboot:
   - name: sysctl
     image: linuxkit/sysctl:725c1cb15fbb210cb9a7530b3a1edb233a4f6361
-  - name: dhcpcd
-    image: linuxkit/dhcpcd:52d2c4df0311b182e99241cdc382ff726755c450
-    command: ["/sbin/dhcpcd", "--nobackground", "-f", "/dhcpcd.conf", "-1"]
+#  - name: dhcpcd
+#    image: linuxkit/dhcpcd:52d2c4df0311b182e99241cdc382ff726755c450
+#    command: ["/sbin/dhcpcd", "--nobackground", "-f", "/dhcpcd.conf", "-1"]
 onshutdown:
   - name: shutdown
     image: busybox:latest
@@ -33,6 +33,14 @@ services:
      - CAP_DAC_OVERRIDE
     binds:
      - /etc/resolv.conf:/etc/resolv.conf
+  - name: sshd
+    image: linuxkit/sshd:62036c2a279715d05e8298b9269a0659964f2619
+    binds.add:
+      - /root/.ssh:/root/.ssh
 files:
+  - path: root/.ssh/authorized_keys
+    source: ~/.ssh/id_rsa.pub
+    mode: "0600"
+    optional: true
   - path: etc/linuxkit-config
     metadata: yaml
